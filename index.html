@@ -1,4 +1,20 @@
-import { useState, useRef, useEffect } from "react";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Real Price Is Your Time</title>
+  <!-- React + a browser-based JSX compiler, loaded from CDN so this page needs no build step -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel" data-presets="react">
+    const { useState, useRef, useEffect } = React;
+
 
 // Financing defaults kept separate so the list above stays readable
 const PRESET_FINANCE = [
@@ -137,7 +153,7 @@ function AnimatedNumber({ value, decimals = 0 }) {
   return <>{display >= 1000 ? Math.round(display).toLocaleString() : display}</>;
 }
 
-export default function OpportunityCostEngine() {
+function OpportunityCostEngine() {
   const [customItem, setCustomItem] = useState("");
   const [purchaseAmount, setPurchaseAmount] = useState("");
   const [selectedPreset, setSelectedPreset] = useState(null);
@@ -305,8 +321,8 @@ export default function OpportunityCostEngine() {
 
       <div className="wrap">
         <img className="brand-logo" src="everyday_rich_stacked_logo_rgb_red.png" alt="Everyday Rich" />
-        <h1 className="headline">The real price<br />is your time</h1>
-        <p className="subhead">Money can be earned again. Time can't. See how many hours of your life any purchase actually costs.</p>
+        <h1 className="headline">The real price<br />is your <em>time</em></h1>
+        <p className="subhead">Money can be earned again. Time can't. See how many hours of your life any purchase actually costs — including what financing really adds.</p>
         <div className="divider" />
 
         {/* Purchase */}
@@ -513,7 +529,7 @@ export default function OpportunityCostEngine() {
             )}
 
             <p className="footnote">
-              Assumes 2,000 working hours/year · 2026 federal income tax brackets + {Math.round(stateRate * 100)}% state tax ({stateTaxMode === "custom" ? "your entered rate" : "national average"}) · 8-hr workdays<br />
+              Assumes 2,000 working hours/year · 2026 federal brackets + {Math.round(stateRate * 100)}% state tax ({stateTaxMode === "custom" ? "your entered rate" : "national average"}) · 8-hr workdays<br />
               <br>This calculator is for educational purposes only and does not constitute financial advice. Individual financial situations vary, and readers should consider consulting a qualified financial professional before making major financial decisions.
             </p>
           </div>
@@ -522,3 +538,8 @@ export default function OpportunityCostEngine() {
     </div>
   );
 }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<OpportunityCostEngine />);
+  </script>
+</body>
+</html>
