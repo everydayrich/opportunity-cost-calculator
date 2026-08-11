@@ -4,542 +4,593 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>The Real Price Is Your Time</title>
-  <!-- React + a browser-based JSX compiler, loaded from CDN so this page needs no build step -->
-  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Lexend:wght@300;400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Lexend', sans-serif;min-height:100vh;background:#F3E6D5}
+    .wrap{max-width:640px;margin:0 auto;padding:48px 20px 80px}
+    .brand-logo{display:block;max-width:190px;width:100%;height:auto;margin:0 auto 18px}
+    .headline{font-family:'Lora',serif;font-size:clamp(30px,6vw,50px);font-weight:700;line-height:1.08;color:#1F2427;margin-bottom:12px;letter-spacing:-.02em;text-align:center}
+    .headline em{font-style:italic;color:#D84233}
+    .subhead{font-family:'Inter',sans-serif;font-size:15px;color:#5E7A78;line-height:1.65;max-width:420px;margin:0 auto 36px;text-align:center}
+    .divider{width:40px;height:2px;background:#EB9532;margin:0 auto 36px}
+
+    .card{background:#fff;border:1px solid #E5D3B4;border-radius:14px;padding:26px 26px 22px;margin-bottom:14px}
+    .card-label{font-family:'Inter',sans-serif;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#D84233;margin-bottom:14px;display:block}
+
+    .row{display:flex;gap:14px;align-items:flex-end}
+    .field{flex:1}
+    .field-label{font-family:'Inter',sans-serif;font-size:12px;color:#5E7A78;margin-bottom:5px;display:block}
+    .iw{display:flex;align-items:center;border-bottom:2px solid #E5D3B4;transition:border-color .2s}
+    .iw:focus-within{border-color:#D84233}
+    .pfx{font-family:'Lora',serif;font-size:20px;color:#cbb896;padding-bottom:5px;line-height:1}
+    .sfx{font-family:'Inter',sans-serif;font-size:13px;color:#5E7A78;padding-bottom:5px;white-space:nowrap}
+    .inp{flex:1;border:none;background:transparent;font-family:'Lora',serif;font-size:20px;font-weight:700;color:#1F2427;padding:5px 0 5px 4px;outline:none;width:100%}
+    .inp::placeholder{color:#cbb896;font-weight:400}
+    .inp-sm{font-size:17px}
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+    input[type="number"]{-moz-appearance:textfield;appearance:textfield}
+
+    .toggle-wrap{display:flex;background:#FBF3E4;border-radius:8px;padding:3px;width:fit-content;margin-bottom:18px}
+    .tbtn{font-family:'Inter',sans-serif;font-size:12px;font-weight:600;padding:6px 16px;border:none;border-radius:6px;cursor:pointer;transition:all .15s;color:#5E7A78;background:transparent}
+    .tbtn.on{background:#4D2C1D;color:#F3E6D5}
+
+    .hint{font-family:'Inter',sans-serif;font-size:12px;color:#5E7A78;margin-top:-10px;margin-bottom:16px;line-height:1.5}
+    .hint strong{color:#1F2427}
+
+    .fin-toggle{display:flex;align-items:center;gap:10px;margin-bottom:0;cursor:pointer;user-select:none}
+    .fin-toggle input[type=checkbox]{width:18px;height:18px;accent-color:#D84233;cursor:pointer}
+    .fin-toggle-label{font-family:'Inter',sans-serif;font-size:13px;font-weight:600;color:#1F2427}
+    .fin-toggle-sub{font-family:'Inter',sans-serif;font-size:12px;color:#5E7A78}
+
+    .fin-fields{margin-top:20px;padding-top:20px;border-top:1px solid #FBF3E4}
+
+    .presets{display:flex;flex-wrap:wrap;gap:7px;margin-top:4px}
+    .pbtn{display:inline-flex;align-items:center;gap:7px;font-family:'Inter',sans-serif;font-size:12px;padding:6px 11px;border-radius:999px;border:1px solid #E5D3B4;background:#FBF3E4;color:#1F2427;cursor:pointer;transition:all .15s;white-space:nowrap}
+    .pbtn-marker{width:6px;height:6px;border-radius:50%;background:#D84233;flex-shrink:0;transition:background .15s}
+    .pbtn:hover{background:#F3E6D5;border-color:#D84233}
+    .pbtn.on{background:#4D2C1D;border-color:#4D2C1D;color:#F3E6D5}
+    .pbtn.on .pbtn-marker{background:#EB9532}
+
+    .calc-btn{width:100%;padding:15px;background:#EB9532;color:#4D2C1D;border:none;border-radius:999px;font-family:'Lexend',sans-serif;font-size:13px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;cursor:pointer;transition:background .2s;margin-top:6px;box-shadow:0 4px 20px rgba(235,149,50,0.25)}
+    .calc-btn:hover:not(:disabled){background:#d6842c}
+    .calc-btn:disabled{opacity:.35;cursor:not-allowed}
+
+    .results{animation:fadeUp .4s ease}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+    /* hero */
+    .hero{background:#4D2C1D;border-radius:20px;padding:32px 28px;margin-bottom:14px;text-align:center}
+    .hero-eyebrow{font-family:'Inter',sans-serif;font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:#EB9532;margin-bottom:12px}
+    .hero-num{font-family:'Lora',serif;font-size:clamp(56px,12vw,80px);font-weight:700;color:#F3E6D5;line-height:1;letter-spacing:-.02em}
+    .hero-unit{font-family:'Lora',serif;font-size:20px;font-style:italic;color:#EB9532;margin-top:6px;margin-bottom:20px}
+    .hero-detail{font-family:'Inter',sans-serif;font-size:13px;color:rgba(243,230,213,0.62);line-height:1.6}
+    .hero-detail strong{color:rgba(243,230,213,0.92)}
+
+    /* comparison cards */
+    .cmp-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+    @media(max-width:460px){.cmp-grid{grid-template-columns:1fr}}
+    .cmp-card{background:#fff;border:1px solid #E5D3B4;border-radius:14px;padding:20px 22px;animation:fadeUp .35s ease both}
+    .cmp-card.interest{border-color:#E6A192;background:#FBEDE8}
+    .cmp-eyebrow{font-family:'Inter',sans-serif;font-size:10px;font-weight:600;letter-spacing:.13em;text-transform:uppercase;color:#5E7A78;margin-bottom:6px}
+    .cmp-eyebrow.red{color:#D84233}
+    .cmp-num{font-family:'Lora',serif;font-size:34px;font-weight:700;color:#1F2427;line-height:1;margin-bottom:4px}
+    .cmp-num.red{color:#D84233}
+    .cmp-label{font-family:'Inter',sans-serif;font-size:12px;color:#5E7A78;line-height:1.4}
+    .cmp-sub{font-family:'Inter',sans-serif;font-size:11px;color:#5E7A78;margin-top:6px;font-style:italic}
+
+    /* breakdown bar */
+    .breakdown{background:#fff;border:1px solid #E5D3B4;border-radius:14px;padding:22px 24px;margin-bottom:14px;animation:fadeUp .4s ease}
+    .breakdown-title{font-family:'Inter',sans-serif;font-size:11px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:#D84233;margin-bottom:16px}
+    .bar-wrap{margin-bottom:6px}
+    .bar-end-labels{display:flex;flex-direction:column;gap:5px;margin-bottom:12px}
+    .bar-end-item{display:flex;align-items:center;gap:8px}
+    .total-item{margin-top:4px;padding-top:8px;border-top:1px solid #FBF3E4}
+    .bar-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+    .bar-end-label{font-family:'Inter',sans-serif;font-size:12px;color:#5E7A78;flex:1}
+    .bar-end-value{font-family:'Lora',serif;font-size:13px;font-weight:700;color:#1F2427}
+    .bar-track-single{display:flex;height:14px;border-radius:7px;overflow:hidden;background:#FBF3E4}
+    .bar-seg{height:100%;transition:width .9s cubic-bezier(.16,1,.3,1)}
+
+    .footnote{font-family:'Inter',sans-serif;font-size:11px;color:#5E7A78;text-align:center;line-height:1.7}
+  </style>
 </head>
 <body>
-  <div id="root"></div>
 
-  <script type="text/babel" data-presets="react">
-    const { useState, useRef, useEffect } = React;
+  <div class="wrap">
+    <img class="brand-logo" src="everyday_rich_stacked_logo_rgb_red.png" alt="Everyday Rich" />
+    <h1 class="headline">The real price<br />is your <em>time</em></h1>
+    <p class="subhead">Money can be earned again. Time can't. See how many hours of your life any purchase actually costs — including what financing really adds.</p>
+    <div class="divider"></div>
 
+    <!-- Purchase -->
+    <div class="card">
+      <span class="card-label">What do you want to buy?</span>
+      <div class="row" style="margin-bottom:18px;">
+        <div class="field">
+          <span class="field-label">Item</span>
+          <div class="iw">
+            <input class="inp" style="font-size:17px;" id="customItem" placeholder="new SUV, pool, vacation…" />
+          </div>
+        </div>
+        <div class="field">
+          <span class="field-label">Sticker price</span>
+          <div class="iw">
+            <span class="pfx">$</span>
+            <input class="inp" id="purchaseAmount" placeholder="52,000" inputmode="numeric" />
+          </div>
+        </div>
+      </div>
+      <span class="card-label" style="margin-bottom:10px;">Quick picks</span>
+      <div class="presets" id="presets"></div>
+    </div>
 
-// Financing defaults kept separate so the list above stays readable
-const PRESET_FINANCE = [
-  { apr: 7.1,  term: 72,  downFrac: 0.10 }, // New SUV
-  { apr: 9.5,  term: 84,  downFrac: 0    }, // Backyard pool
-  { apr: 6.5,  term: 120, downFrac: 0    }, // Private school (1 yr)
-  { apr: 0,    term: 12,  downFrac: 0    }, // Daycare (1 yr)
-  { apr: 7.5,  term: 360, downFrac: 0.20 }, // Vacation home
-  { apr: 8.5,  term: 84,  downFrac: 0    }, // Kitchen remodel
-  { apr: 0,    term: 24,  downFrac: 0    }, // New iPhone
-  { apr: 19.9, term: 24,  downFrac: 0    }, // Luxury handbag
-];
+    <!-- Income -->
+    <div class="card">
+      <span class="card-label">Your income</span>
+      <div class="toggle-wrap">
+        <button class="tbtn on" id="incomeModeAnnualBtn" onclick="setIncomeMode('annual')">Annual salary</button>
+        <button class="tbtn" id="incomeModeHourlyBtn" onclick="setIncomeMode('hourly')">Hourly wage</button>
+      </div>
+      <div class="iw" id="incomeWrap" style="margin-bottom:0;">
+        <span class="pfx">$</span>
+        <input class="inp" id="incomeValue" placeholder="85,000" inputmode="numeric" />
+        <span class="sfx" id="incomeSuffix">/year</span>
+      </div>
 
-const PRESET_ITEMS = [
-  { label: "New SUV",            value: 52000  },
-  { label: "Backyard pool",      value: 65000  },
-  { label: "Private school (1 yr)", value: 15000 },
-  { label: "Daycare (1 yr)",     value: 12000  },
-  { label: "Vacation home",      value: 420000 },
-  { label: "Kitchen remodel",    value: 30000  },
-  { label: "New iPhone",         value: 1200   },
-  { label: "Luxury handbag",     value: 3500   },
-].map((item, i) => ({ ...item, ...PRESET_FINANCE[i] }));
+      <div class="field-label" style="margin-top:14px; margin-bottom:6px;">State tax rate</div>
+      <div class="toggle-wrap">
+        <button class="tbtn on" id="stateModeAvgBtn" onclick="setStateMode('average')">National average (5%)</button>
+        <button class="tbtn" id="stateModeCustomBtn" onclick="setStateMode('custom')">Enter my own rate</button>
+      </div>
+      <div class="iw" id="customStateRateWrap" style="display:none; margin-top:10px;">
+        <input class="inp inp-sm" id="customStateRatePct" placeholder="0" inputmode="decimal" />
+        <span class="sfx">%</span>
+      </div>
+      <p class="hint" id="stateRateHint" style="display:none; margin-top:8px;">e.g. Tennessee, Florida, and Texas residents can enter 0% — nine states have no state income tax</p>
 
-const WORK_HOURS_PER_DAY = 8;
-const WORK_HOURS_PER_YEAR = 2000;
-const DEFAULT_STATE_TAX_RATE = 0.05;
+      <p class="hint" id="incomeHint" style="display:none; margin-top:8px;"></p>
+    </div>
 
-// 2026 estimated federal income tax brackets (single filer)
-const FEDERAL_BRACKETS = [
-  { limit: 11925,  rate: 0.10 },
-  { limit: 48475,  rate: 0.12 },
-  { limit: 103350, rate: 0.22 },
-  { limit: 197300, rate: 0.24 },
-  { limit: 250525, rate: 0.32 },
-  { limit: 626350, rate: 0.35 },
-  { limit: Infinity, rate: 0.37 },
-];
+    <!-- Financing -->
+    <div class="card">
+      <label class="fin-toggle">
+        <input type="checkbox" id="financingCheckbox" onchange="onFinancingToggle(this.checked)" />
+        <div>
+          <div class="fin-toggle-label">I plan to finance this purchase</div>
+          <div class="fin-toggle-sub">See the true cost with interest included</div>
+        </div>
+      </label>
 
-// Returns effective (average) federal tax rate for a given annual gross income
-function effectiveFederalRate(annualGross) {
-  if (!annualGross || annualGross <= 0) return 0;
-  let tax = 0;
-  let prev = 0;
-  for (const bracket of FEDERAL_BRACKETS) {
-    if (annualGross <= prev) break;
-    const taxable = Math.min(annualGross, bracket.limit) - prev;
-    tax += taxable * bracket.rate;
-    prev = bracket.limit;
+      <div class="fin-fields" id="finFields" style="display:none;">
+        <div class="row" style="margin-bottom:16px;">
+          <div class="field">
+            <span class="field-label">Down payment</span>
+            <div class="iw">
+              <span class="pfx">$</span>
+              <input class="inp inp-sm" id="downPayment" placeholder="5,000" inputmode="numeric" />
+            </div>
+          </div>
+          <div class="field">
+            <span class="field-label">APR (%)</span>
+            <div class="iw">
+              <input class="inp inp-sm" id="apr" placeholder="7.0" inputmode="decimal" />
+              <span class="sfx">%</span>
+            </div>
+          </div>
+          <div class="field">
+            <span class="field-label">Term</span>
+            <div class="iw">
+              <input class="inp inp-sm" id="termMonths" placeholder="60" inputmode="numeric" />
+              <span class="sfx">mo</span>
+            </div>
+          </div>
+        </div>
+        <p class="hint" id="finHint" style="display:none;"></p>
+      </div>
+
+      <button class="calc-btn" id="calcBtn" onclick="calculate()" disabled>Show me the real cost →</button>
+    </div>
+
+    <!-- Results -->
+    <div class="results" id="resultsPanel" style="display:none;"></div>
+  </div>
+
+<script>
+  // ── Presets ────────────────────────────────────────────────────────
+  const PRESET_FINANCE = [
+    { apr: 7.1,  term: 72,  downFrac: 0.10 }, // New SUV
+    { apr: 9.5,  term: 84,  downFrac: 0    }, // Backyard pool
+    { apr: 6.5,  term: 120, downFrac: 0    }, // Private school (1 yr)
+    { apr: 0,    term: 12,  downFrac: 0    }, // Daycare (1 yr)
+    { apr: 7.5,  term: 360, downFrac: 0.20 }, // Vacation home
+    { apr: 8.5,  term: 84,  downFrac: 0    }, // Kitchen remodel
+    { apr: 0,    term: 24,  downFrac: 0    }, // New iPhone
+    { apr: 19.9, term: 24,  downFrac: 0    }, // Luxury handbag
+  ];
+
+  const PRESET_ITEMS = [
+    { label: "New SUV",               value: 52000  },
+    { label: "Backyard pool",         value: 65000  },
+    { label: "Private school (1 yr)", value: 15000  },
+    { label: "Daycare (1 yr)",        value: 12000  },
+    { label: "Vacation home",         value: 420000 },
+    { label: "Kitchen remodel",       value: 30000  },
+    { label: "New iPhone",            value: 1200   },
+    { label: "Luxury handbag",        value: 3500   },
+  ].map((item, i) => ({ ...item, ...PRESET_FINANCE[i] }));
+
+  const WORK_HOURS_PER_DAY = 8;
+  const WORK_HOURS_PER_YEAR = 2000;
+  const DEFAULT_STATE_TAX_RATE = 0.05;
+
+  // 2026 estimated federal income tax brackets (single filer)
+  const FEDERAL_BRACKETS = [
+    { limit: 11925,  rate: 0.10 },
+    { limit: 48475,  rate: 0.12 },
+    { limit: 103350, rate: 0.22 },
+    { limit: 197300, rate: 0.24 },
+    { limit: 250525, rate: 0.32 },
+    { limit: 626350, rate: 0.35 },
+    { limit: Infinity, rate: 0.37 },
+  ];
+
+  function effectiveFederalRate(annualGross) {
+    if (!annualGross || annualGross <= 0) return 0;
+    let tax = 0, prev = 0;
+    for (const bracket of FEDERAL_BRACKETS) {
+      if (annualGross <= prev) break;
+      const taxable = Math.min(annualGross, bracket.limit) - prev;
+      tax += taxable * bracket.rate;
+      prev = bracket.limit;
+    }
+    return tax / annualGross;
   }
-  return tax / annualGross;
-}
 
-// Returns after-tax fraction (1 - effective federal rate - state rate)
-function afterTaxFraction(annualGross, stateRate) {
-  return 1 - effectiveFederalRate(annualGross) - stateRate;
-}
+  function afterTaxFraction(annualGross, stateRate) {
+    return 1 - effectiveFederalRate(annualGross) - stateRate;
+  }
 
-function getHourlyRate(mode, value) {
-  if (!value || value <= 0) return 0;
-  if (mode === "hourly") return parseFloat(value);
-  return parseFloat(value) / WORK_HOURS_PER_YEAR;
-}
+  function getHourlyRate(mode, value) {
+    if (!value || value <= 0) return 0;
+    if (mode === "hourly") return parseFloat(value);
+    return parseFloat(value) / WORK_HOURS_PER_YEAR;
+  }
 
-// Derive annual gross from hourly for bracket calc
-function annualFromMode(mode, value) {
-  if (!value || value <= 0) return 0;
-  const v = parseFloat(value);
-  return mode === "hourly" ? v * WORK_HOURS_PER_YEAR : v;
-}
+  function annualFromMode(mode, value) {
+    if (!value || value <= 0) return 0;
+    const v = parseFloat(value);
+    return mode === "hourly" ? v * WORK_HOURS_PER_YEAR : v;
+  }
 
-function calcTotalFinanced(principal, downPayment, apr, termMonths) {
-  const loan = principal - downPayment;
-  if (loan <= 0 || apr === 0) return principal;
-  const monthlyRate = apr / 100 / 12;
-  const payment = (loan * monthlyRate * Math.pow(1 + monthlyRate, termMonths)) / (Math.pow(1 + monthlyRate, termMonths) - 1);
-  return downPayment + payment * termMonths;
-}
+  function calcTotalFinanced(principal, downPayment, apr, termMonths) {
+    const loan = principal - downPayment;
+    if (loan <= 0 || apr === 0) return principal;
+    const monthlyRate = apr / 100 / 12;
+    const payment = (loan * monthlyRate * Math.pow(1 + monthlyRate, termMonths)) / (Math.pow(1 + monthlyRate, termMonths) - 1);
+    return downPayment + payment * termMonths;
+  }
 
-function calcTotalInterest(principal, downPayment, apr, termMonths) {
-  const loan = principal - downPayment;
-  if (loan <= 0 || apr === 0) return 0;
-  const monthlyRate = apr / 100 / 12;
-  const payment = (loan * monthlyRate * Math.pow(1 + monthlyRate, termMonths)) / (Math.pow(1 + monthlyRate, termMonths) - 1);
-  return payment * termMonths - loan;
-}
+  function calcTotalInterest(principal, downPayment, apr, termMonths) {
+    const loan = principal - downPayment;
+    if (loan <= 0 || apr === 0) return 0;
+    const monthlyRate = apr / 100 / 12;
+    const payment = (loan * monthlyRate * Math.pow(1 + monthlyRate, termMonths)) / (Math.pow(1 + monthlyRate, termMonths) - 1);
+    return payment * termMonths - loan;
+  }
 
-function calcMonthlyPayment(principal, downPayment, apr, termMonths) {
-  const loan = principal - downPayment;
-  if (loan <= 0 || apr === 0) return loan / termMonths;
-  const monthlyRate = apr / 100 / 12;
-  return (loan * monthlyRate * Math.pow(1 + monthlyRate, termMonths)) / (Math.pow(1 + monthlyRate, termMonths) - 1);
-}
+  function calcMonthlyPayment(principal, downPayment, apr, termMonths) {
+    const loan = principal - downPayment;
+    if (loan <= 0 || apr === 0) return loan / termMonths;
+    const monthlyRate = apr / 100 / 12;
+    return (loan * monthlyRate * Math.pow(1 + monthlyRate, termMonths)) / (Math.pow(1 + monthlyRate, termMonths) - 1);
+  }
 
-function hoursToWork(totalCost, hourlyNet) {
-  if (!hourlyNet) return 0;
-  return totalCost / hourlyNet;
-}
+  function hoursToWork(totalCost, hourlyNet) {
+    if (!hourlyNet) return 0;
+    return totalCost / hourlyNet;
+  }
 
-function smartRound(n) {
-  if (n >= 1000) return Math.round(n / 10) * 10;
-  if (n >= 100) return Math.round(n / 5) * 5;
-  if (n >= 10) return Math.round(n);
-  if (n >= 1) return Math.round(n * 10) / 10;
-  return Math.round(n * 100) / 100;
-}
+  function smartRound(n) {
+    if (n >= 1000) return Math.round(n / 10) * 10;
+    if (n >= 100) return Math.round(n / 5) * 5;
+    if (n >= 10) return Math.round(n);
+    if (n >= 1) return Math.round(n * 10) / 10;
+    return Math.round(n * 100) / 100;
+  }
 
-function fmt$(n) {
-  if (!n && n !== 0) return "—";
-  if (n >= 1000000) return `$${(n / 1000000).toFixed(2)}M`;
-  if (n >= 1000) return `$${Math.round(n).toLocaleString()}`;
-  return `$${Math.round(n)}`;
-}
+  function fmtd(n) {
+    if (n === null || n === undefined || isNaN(n)) return "—";
+    if (n >= 1000000) return "$" + (n / 1000000).toFixed(2) + "M";
+    if (n >= 1000) return "$" + Math.round(n).toLocaleString();
+    return "$" + Math.round(n);
+  }
 
-function AnimatedNumber({ value, decimals = 0 }) {
-  const [display, setDisplay] = useState(0);
-  const prevRef = useRef(0);
-  const rafRef = useRef(null);
-  useEffect(() => {
-    if (rafRef.current) cancelAnimationFrame(rafRef.current);
-    const start = prevRef.current;
-    const end = value;
+  // ── App state ──────────────────────────────────────────────────────
+  let selectedPresetLabel = null;
+  let incomeMode = "annual";
+  let stateTaxMode = "average"; // "average" | "custom"
+  let financing = false;
+
+  // ── Helpers ────────────────────────────────────────────────────────
+  function el(id) { return document.getElementById(id); }
+  function parsedNum(id) {
+    const v = (el(id).value || "").replace(/[^0-9.]/g, "");
+    return parseFloat(v) || 0;
+  }
+  function formatCommaInput(inputEl) {
+    const raw = inputEl.value.replace(/[^0-9.]/g, "");
+    inputEl.value = raw ? parseFloat(raw).toLocaleString() : "";
+  }
+
+  // ── Render preset buttons ──────────────────────────────────────────
+  function renderPresets() {
+    const wrap = el('presets');
+    wrap.innerHTML = PRESET_ITEMS.map(p => `
+      <button type="button" class="pbtn${selectedPresetLabel === p.label ? ' on' : ''}" onclick="selectPreset('${p.label.replace(/'/g, "\\'")}')">
+        <span class="pbtn-marker"></span>${p.label}
+      </button>
+    `).join('');
+  }
+
+  function selectPreset(label) {
+    const p = PRESET_ITEMS.find(x => x.label === label);
+    if (!p) return;
+    selectedPresetLabel = p.label;
+    el('customItem').value = p.label;
+    el('purchaseAmount').value = p.value.toLocaleString();
+    el('apr').value = String(p.apr);
+    el('termMonths').value = String(p.term);
+    el('downPayment').value = p.downFrac > 0 ? Math.round(p.value * p.downFrac).toLocaleString() : "";
+    financing = p.apr > 0;
+    el('financingCheckbox').checked = financing;
+    el('finFields').style.display = financing ? 'block' : 'none';
+    renderPresets();
+    resetResults();
+    updateAll();
+  }
+
+  // ── Mode toggles ───────────────────────────────────────────────────
+  function setIncomeMode(mode) {
+    incomeMode = mode;
+    el('incomeModeAnnualBtn').classList.toggle('on', mode === 'annual');
+    el('incomeModeHourlyBtn').classList.toggle('on', mode === 'hourly');
+    el('incomeValue').value = '';
+    el('incomeValue').placeholder = mode === 'annual' ? '85,000' : '42';
+    el('incomeSuffix').textContent = mode === 'annual' ? '/year' : '/hr';
+    resetResults();
+    updateAll();
+  }
+
+  function setStateMode(mode) {
+    stateTaxMode = mode;
+    el('stateModeAvgBtn').classList.toggle('on', mode === 'average');
+    el('stateModeCustomBtn').classList.toggle('on', mode === 'custom');
+    el('customStateRateWrap').style.display = mode === 'custom' ? 'flex' : 'none';
+    el('stateRateHint').style.display = mode === 'custom' ? 'block' : 'none';
+    resetResults();
+    updateAll();
+  }
+
+  function onFinancingToggle(checked) {
+    financing = checked;
+    el('finFields').style.display = checked ? 'block' : 'none';
+    resetResults();
+    updateAll();
+  }
+
+  // ── Derived state + live hints ────────────────────────────────────
+  function getStateRate() {
+    if (stateTaxMode === 'custom') {
+      const pct = parseFloat((el('customStateRatePct').value || '').replace(/[^0-9.]/g, ''));
+      return (!isNaN(pct) && pct >= 0) ? pct / 100 : 0;
+    }
+    return DEFAULT_STATE_TAX_RATE;
+  }
+
+  function updateAll() {
+    const parsedPurchase = parsedNum('purchaseAmount');
+    const parsedIncome = parsedNum('incomeValue');
+    const parsedDown = parsedNum('downPayment');
+    const parsedApr = parseFloat(el('apr').value) || 0;
+    const parsedTerm = parseInt(el('termMonths').value) || 60;
+
+    const hourlyGross = getHourlyRate(incomeMode, parsedIncome);
+    const annualGross = annualFromMode(incomeMode, parsedIncome);
+    const stateRate = getStateRate();
+    const atFraction = afterTaxFraction(annualGross, stateRate);
+    const netHourly = hourlyGross * atFraction;
+    const effectiveFedPct = Math.round(effectiveFederalRate(annualGross) * 100);
+    const totalTaxPct = Math.round((1 - atFraction) * 100);
+
+    const incomeHintEl = el('incomeHint');
+    if (parsedIncome > 0 && netHourly > 0) {
+      incomeHintEl.style.display = 'block';
+      incomeHintEl.innerHTML = `After taxes (${effectiveFedPct}% federal + ${Math.round(stateRate * 100)}% state = ${totalTaxPct}% total), your take-home is roughly <strong>$${netHourly.toFixed(2)}/hr</strong>` +
+        (incomeMode === 'annual' ? ` · ${fmtd(annualGross * atFraction)}/year` : '');
+    } else {
+      incomeHintEl.style.display = 'none';
+    }
+
+    const financedTotal = financing ? calcTotalFinanced(parsedPurchase, parsedDown, parsedApr, parsedTerm) : parsedPurchase;
+    const totalInterest = financing ? calcTotalInterest(parsedPurchase, parsedDown, parsedApr, parsedTerm) : 0;
+    const monthlyPayment = financing ? calcMonthlyPayment(parsedPurchase, parsedDown, parsedApr, parsedTerm) : 0;
+
+    const finHintEl = el('finHint');
+    if (financing && parsedPurchase > 0) {
+      finHintEl.style.display = 'block';
+      finHintEl.innerHTML = `Monthly payment: <strong>${fmtd(monthlyPayment)}</strong> · ` +
+        (parsedApr > 0 ? `Total interest: <strong>${fmtd(totalInterest)}</strong> · ` : `0% interest · `) +
+        `True cost: <strong>${fmtd(financedTotal)}</strong>`;
+    } else {
+      finHintEl.style.display = 'none';
+    }
+
+    el('calcBtn').disabled = !(parsedPurchase > 0 && parsedIncome > 0);
+  }
+
+  function resetResults() {
+    el('resultsPanel').style.display = 'none';
+    el('resultsPanel').innerHTML = '';
+  }
+
+  // ── Animated count-up (matches original AnimatedNumber component) ──
+  function animateNumber(elNode, endValue) {
+    const start = 0;
     const duration = 750;
     const t0 = performance.now();
-    const tick = (now) => {
+    function tick(now) {
       const p = Math.min((now - t0) / duration, 1);
       const e = 1 - Math.pow(1 - p, 3);
-      const cur = start + (end - start) * e;
-      setDisplay(decimals ? Math.round(cur * 100) / 100 : Math.round(cur));
-      if (p < 1) rafRef.current = requestAnimationFrame(tick);
-      else prevRef.current = end;
-    };
-    rafRef.current = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(rafRef.current);
-  }, [value]);
-  return <>{display >= 1000 ? Math.round(display).toLocaleString() : display}</>;
-}
-
-function OpportunityCostEngine() {
-  const [customItem, setCustomItem] = useState("");
-  const [purchaseAmount, setPurchaseAmount] = useState("");
-  const [selectedPreset, setSelectedPreset] = useState(null);
-
-  const [incomeMode, setIncomeMode] = useState("annual");
-  const [incomeValue, setIncomeValue] = useState("");
-  const [stateTaxMode, setStateTaxMode] = useState("average"); // "average" | "custom"
-  const [customStateRatePct, setCustomStateRatePct] = useState("");
-
-  const [financing, setFinancing] = useState(false);
-  const [downPayment, setDownPayment] = useState("");
-  const [apr, setApr] = useState("7");
-  const [termMonths, setTermMonths] = useState("60");
-
-  const [results, setResults] = useState(null);
-
-  const parsedPurchase = parseFloat((purchaseAmount || "").replace(/[^0-9.]/g, "")) || 0;
-  const parsedIncome = parseFloat((incomeValue || "").replace(/[^0-9.]/g, "")) || 0;
-  const parsedDown = parseFloat((downPayment || "").replace(/[^0-9.]/g, "")) || 0;
-  const parsedApr = parseFloat(apr) || 0;
-  const parsedTerm = parseInt(termMonths) || 60;
-
-  const hourlyGross = getHourlyRate(incomeMode, parsedIncome);
-  const annualGross = annualFromMode(incomeMode, parsedIncome);
-  const parsedCustomStateRate = parseFloat(customStateRatePct);
-  const stateRate = stateTaxMode === "custom"
-    ? ((!isNaN(parsedCustomStateRate) && parsedCustomStateRate >= 0) ? parsedCustomStateRate / 100 : 0)
-    : DEFAULT_STATE_TAX_RATE;
-  const atFraction = afterTaxFraction(annualGross, stateRate);
-  const netHourly = hourlyGross * atFraction;
-  const effectiveFedPct = Math.round(effectiveFederalRate(annualGross) * 100);
-  const totalTaxPct = Math.round((1 - atFraction) * 100);
-
-  const cashTotal = parsedPurchase;
-  const financedTotal = financing ? calcTotalFinanced(parsedPurchase, parsedDown, parsedApr, parsedTerm) : parsedPurchase;
-  const totalInterest = financing ? calcTotalInterest(parsedPurchase, parsedDown, parsedApr, parsedTerm) : 0;
-  const monthlyPayment = financing ? calcMonthlyPayment(parsedPurchase, parsedDown, parsedApr, parsedTerm) : 0;
-
-  const hoursCash = hoursToWork(cashTotal, hourlyGross);
-  const hoursFinanced = hoursToWork(financedTotal, hourlyGross);
-  const hoursInterestOnly = hoursToWork(totalInterest, hourlyGross);
-
-  const canCalculate = parsedPurchase > 0 && parsedIncome > 0;
-
-  function selectPreset(p) {
-    setSelectedPreset(p);
-    setPurchaseAmount(p.value.toLocaleString());
-    setCustomItem(p.label);
-    // Apply realistic financing defaults for this purchase type
-    setApr(String(p.apr));
-    setTermMonths(String(p.term));
-    setDownPayment(p.downFrac > 0 ? Math.round(p.value * p.downFrac).toLocaleString() : "");
-    // Auto-enable financing if this purchase is typically financed (apr > 0)
-    setFinancing(p.apr > 0);
-    setResults(null);
+      const cur = start + (endValue - start) * e;
+      elNode.textContent = Math.round(cur).toLocaleString();
+      if (p < 1) requestAnimationFrame(tick);
+      else elNode.textContent = Math.round(endValue).toLocaleString();
+    }
+    requestAnimationFrame(tick);
   }
 
-  function reset() { setResults(null); }
-
+  // ── Calculate + render results ────────────────────────────────────
   function calculate() {
-    if (!canCalculate) return;
-    setResults({
+    const parsedPurchase = parsedNum('purchaseAmount');
+    const parsedIncome = parsedNum('incomeValue');
+    const parsedDown = parsedNum('downPayment');
+    const parsedApr = parseFloat(el('apr').value) || 0;
+    const parsedTerm = parseInt(el('termMonths').value) || 60;
+    const customItem = el('customItem').value;
+
+    if (!(parsedPurchase > 0 && parsedIncome > 0)) return;
+
+    const hourlyGross = getHourlyRate(incomeMode, parsedIncome);
+    const stateRate = getStateRate();
+    const annualGross = annualFromMode(incomeMode, parsedIncome);
+    const atFraction = afterTaxFraction(annualGross, stateRate);
+    const netHourly = hourlyGross * atFraction;
+
+    const cashTotal = parsedPurchase;
+    const financedTotal = financing ? calcTotalFinanced(parsedPurchase, parsedDown, parsedApr, parsedTerm) : parsedPurchase;
+    const totalInterest = financing ? calcTotalInterest(parsedPurchase, parsedDown, parsedApr, parsedTerm) : 0;
+
+    const hoursCash = hoursToWork(cashTotal, hourlyGross);
+    const hoursFinanced = hoursToWork(financedTotal, hourlyGross);
+    const hoursInterestOnly = hoursToWork(totalInterest, hourlyGross);
+
+    const r = {
       hoursCash: smartRound(hoursCash),
       hoursFinanced: smartRound(hoursFinanced),
       hoursInterest: smartRound(hoursInterestOnly),
       daysCash: smartRound(hoursCash / WORK_HOURS_PER_DAY),
       daysFinanced: smartRound(hoursFinanced / WORK_HOURS_PER_DAY),
       daysInterest: smartRound(hoursInterestOnly / WORK_HOURS_PER_DAY),
-      totalCost: financedTotal,
-      totalInterest,
-      monthlyPayment,
-      monthlyHours: hoursToWork(monthlyPayment, hourlyGross),
-    });
+    };
+
+    const panel = el('resultsPanel');
+    const showFinanced = financing && totalInterest > 0;
+
+    let html = '';
+
+    // Hero
+    if (showFinanced) {
+      html += `
+        <div class="hero">
+          <div class="hero-eyebrow">Financed, ${customItem || 'this'} will cost you</div>
+          <div class="hero-num" id="heroNum">0</div>
+          <div class="hero-unit">hours of your life</div>
+          <div class="hero-detail"><strong>${r.daysFinanced.toLocaleString()} full work days</strong> · ${fmtd(financedTotal)} true cost · at $${netHourly.toFixed(2)}/hr after tax</div>
+        </div>`;
+    } else {
+      html += `
+        <div class="hero">
+          <div class="hero-eyebrow">To pay cash for ${customItem || 'this'}, you must work</div>
+          <div class="hero-num" id="heroNum">0</div>
+          <div class="hero-unit">hours of your life</div>
+          <div class="hero-detail"><strong>${r.daysCash.toLocaleString()} full work days</strong> · at $${netHourly.toFixed(2)}/hr after tax</div>
+        </div>`;
+    }
+
+    if (showFinanced) {
+      html += `
+        <div class="cmp-grid">
+          <div class="cmp-card" style="animation-delay:0.05s;">
+            <div class="cmp-eyebrow">If paying cash</div>
+            <div class="cmp-num" id="cmpCashNum">0</div>
+            <div class="cmp-label">hours worked</div>
+            <div class="cmp-sub">${r.daysCash.toLocaleString()} work days · ${fmtd(parsedPurchase)} sticker price</div>
+          </div>
+          <div class="cmp-card interest" style="animation-delay:0.1s;">
+            <div class="cmp-eyebrow red">Interest alone costs you</div>
+            <div class="cmp-num red" id="cmpInterestNum">0</div>
+            <div class="cmp-label">extra hours worked</div>
+            <div class="cmp-sub">${r.daysInterest.toLocaleString()} extra work days · ${fmtd(totalInterest)} in interest</div>
+          </div>
+        </div>
+
+        <div class="breakdown">
+          <div class="breakdown-title">How your hours break down</div>
+          <div class="bar-wrap">
+            <div class="bar-end-labels">
+              <div class="bar-end-item">
+                <span class="bar-dot" style="background:#EB9532;"></span>
+                <span class="bar-end-label">Purchase price</span>
+                <span class="bar-end-value">${r.hoursCash.toLocaleString()} hrs</span>
+              </div>
+              <div class="bar-end-item">
+                <span class="bar-dot" style="background:#D84233;"></span>
+                <span class="bar-end-label">Interest</span>
+                <span class="bar-end-value">${r.hoursInterest.toLocaleString()} hrs</span>
+              </div>
+              <div class="bar-end-item total-item">
+                <span class="bar-dot" style="background:transparent;"></span>
+                <span class="bar-end-label" style="font-weight:600;color:#1F2427;">Total</span>
+                <span class="bar-end-value" style="font-weight:700;color:#1F2427;">${r.hoursFinanced.toLocaleString()} hrs</span>
+              </div>
+            </div>
+            <div class="bar-track-single">
+              <div class="bar-seg" style="width:${(r.hoursCash / r.hoursFinanced) * 100}%; background:#EB9532;"></div>
+              <div class="bar-seg" style="width:${(r.hoursInterest / r.hoursFinanced) * 100}%; background:#D84233;"></div>
+            </div>
+          </div>
+          <p style="font-family:'Inter',sans-serif; font-size:12px; color:#5E7A78; margin-top:14px;">
+            ${Math.round((r.hoursInterest / r.hoursFinanced) * 100)}% of your working hours go straight to the bank.
+          </p>
+        </div>`;
+    }
+
+    html += `
+      <p class="footnote">
+        Assumes 2,000 working hours/year · 2026 federal brackets + ${Math.round(stateRate * 100)}% state tax (${stateTaxMode === 'custom' ? 'your entered rate' : 'national average'}) · 8-hr workday<br />
+        This calculator is for educational purposes only and does not constitute financial advice. Individual financial situations vary, and readers should consider consulting a qualified financial professional before making major financial decisions.
+      </p>`;
+
+    panel.innerHTML = html;
+    panel.style.display = 'block';
+
+    animateNumber(el('heroNum'), showFinanced ? r.hoursFinanced : r.hoursCash);
+    if (showFinanced) {
+      animateNumber(el('cmpCashNum'), r.hoursCash);
+      animateNumber(el('cmpInterestNum'), r.hoursInterest);
+    }
   }
 
-  return (
-    <div style={{ fontFamily: "'Lexend', sans-serif", minHeight: "100vh", background: "#F3E6D5" }}>
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Lexend:wght@300;400;500;600;700&family=Inter:wght@400;500;600&display=swap');
-        *{box-sizing:border-box;margin:0;padding:0}
-        .wrap{max-width:640px;margin:0 auto;padding:48px 20px 80px}
-        .brand-logo{display:block;max-width:190px;width:100%;height:auto;margin:0 auto 18px}
-        .headline{font-family:'Lora',serif;font-size:clamp(30px,6vw,50px);font-weight:700;line-height:1.08;color:#1F2427;margin-bottom:12px;letter-spacing:-.02em;text-align:center}
-        .headline em{font-style:italic;color:#D84233}
-        .subhead{font-family:'Inter',sans-serif;font-size:15px;color:#5E7A78;line-height:1.65;max-width:420px;margin:0 auto 36px;text-align:center}
-        .divider{width:40px;height:2px;background:#EB9532;margin:0 auto 36px}
+  // ── Wire up input listeners ────────────────────────────────────────
+  el('customItem').addEventListener('input', () => { selectedPresetLabel = null; renderPresets(); resetResults(); updateAll(); });
+  el('purchaseAmount').addEventListener('input', (e) => { formatCommaInput(e.target); selectedPresetLabel = null; renderPresets(); resetResults(); updateAll(); });
+  el('purchaseAmount').addEventListener('keydown', (e) => { if (e.key === 'Enter') calculate(); });
+  el('incomeValue').addEventListener('input', (e) => { formatCommaInput(e.target); resetResults(); updateAll(); });
+  el('incomeValue').addEventListener('keydown', (e) => { if (e.key === 'Enter') calculate(); });
+  el('customStateRatePct').addEventListener('input', (e) => { e.target.value = e.target.value.replace(/[^0-9.]/g, ''); resetResults(); updateAll(); });
+  el('downPayment').addEventListener('input', (e) => { formatCommaInput(e.target); resetResults(); updateAll(); });
+  el('apr').addEventListener('input', (e) => { e.target.value = e.target.value.replace(/[^0-9.]/g, ''); resetResults(); updateAll(); });
+  el('termMonths').addEventListener('input', (e) => { e.target.value = e.target.value.replace(/[^0-9]/g, ''); resetResults(); updateAll(); });
 
-        .card{background:#fff;border:1px solid #E5D3B4;border-radius:14px;padding:26px 26px 22px;margin-bottom:14px}
-        .card-label{font-family:'Inter',sans-serif;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#D84233;margin-bottom:14px;display:block}
+  // ── Init ───────────────────────────────────────────────────────────
+  el('apr').value = '7';
+  el('termMonths').value = '60';
+  renderPresets();
+  updateAll();
+</script>
 
-        .row{display:flex;gap:14px;align-items:flex-end}
-        .field{flex:1}
-        .field-label{font-family:'Inter',sans-serif;font-size:12px;color:#5E7A78;margin-bottom:5px;display:block}
-        .iw{display:flex;align-items:center;border-bottom:2px solid #E5D3B4;transition:border-color .2s}
-        .iw:focus-within{border-color:#D84233}
-        .pfx{font-family:'Lora',serif;font-size:20px;color:#cbb896;padding-bottom:5px;line-height:1}
-        .sfx{font-family:'Inter',sans-serif;font-size:13px;color:#5E7A78;padding-bottom:5px;white-space:nowrap}
-        .inp{flex:1;border:none;background:transparent;font-family:'Lora',serif;font-size:20px;font-weight:700;color:#1F2427;padding:5px 0 5px 4px;outline:none;width:100%}
-        .inp::placeholder{color:#cbb896;font-weight:400}
-        .inp-sm{font-size:17px}
-
-        .toggle-wrap{display:flex;background:#FBF3E4;border-radius:var(--radius-sm,8px);padding:3px;width:fit-content;margin-bottom:18px}
-        .tbtn{font-family:'Inter',sans-serif;font-size:12px;font-weight:600;padding:6px 16px;border:none;border-radius:6px;cursor:pointer;transition:all .15s;color:#5E7A78;background:transparent}
-        .tbtn.on{background:#4D2C1D;color:#F3E6D5}
-
-        .hint{font-family:'Inter',sans-serif;font-size:12px;color:#5E7A78;margin-top:-10px;margin-bottom:16px;line-height:1.5}
-        .hint strong{color:#1F2427}
-
-        .fin-toggle{display:flex;align-items:center;gap:10px;margin-bottom:0;cursor:pointer;user-select:none}
-        .fin-toggle input[type=checkbox]{width:18px;height:18px;accent-color:#D84233;cursor:pointer}
-        .fin-toggle-label{font-family:'Inter',sans-serif;font-size:13px;font-weight:600;color:#1F2427}
-        .fin-toggle-sub{font-family:'Inter',sans-serif;font-size:12px;color:#5E7A78}
-
-        .fin-fields{margin-top:20px;padding-top:20px;border-top:1px solid #FBF3E4}
-
-        .presets{display:flex;flex-wrap:wrap;gap:7px;margin-top:4px}
-        .pbtn{display:inline-flex;align-items:center;gap:7px;font-family:'Inter',sans-serif;font-size:12px;padding:6px 11px;border-radius:999px;border:1px solid #E5D3B4;background:#FBF3E4;color:#1F2427;cursor:pointer;transition:all .15s;white-space:nowrap}
-        .pbtn-marker{width:6px;height:6px;border-radius:50%;background:#D84233;flex-shrink:0;transition:background .15s}
-        .pbtn:hover{background:#F3E6D5;border-color:#D84233}
-        .pbtn.on{background:#4D2C1D;border-color:#4D2C1D;color:#F3E6D5}
-        .pbtn.on .pbtn-marker{background:#EB9532}
-
-        .calc-btn{width:100%;padding:15px;background:#EB9532;color:#4D2C1D;border:none;border-radius:999px;font-family:'Lexend',sans-serif;font-size:13px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;cursor:pointer;transition:background .2s;margin-top:6px;box-shadow:0 4px 20px rgba(235,149,50,0.25)}
-        .calc-btn:hover:not(:disabled){background:#d6842c}
-        .calc-btn:disabled{opacity:.35;cursor:not-allowed}
-
-        .results{animation:fadeUp .4s ease}
-        @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-
-        /* hero */
-        .hero{background:#4D2C1D;border-radius:20px;padding:32px 28px;margin-bottom:14px;text-align:center}
-        .hero-eyebrow{font-family:'Inter',sans-serif;font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:#EB9532;margin-bottom:12px}
-        .hero-num{font-family:'Lora',serif;font-size:clamp(56px,12vw,80px);font-weight:700;color:#F3E6D5;line-height:1;letter-spacing:-.02em}
-        .hero-unit{font-family:'Lora',serif;font-size:20px;font-style:italic;color:#EB9532;margin-top:6px;margin-bottom:20px}
-        .hero-detail{font-family:'Inter',sans-serif;font-size:13px;color:rgba(243,230,213,0.62);line-height:1.6}
-        .hero-detail strong{color:rgba(243,230,213,0.92)}
-
-        /* comparison cards */
-        .cmp-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
-        @media(max-width:460px){.cmp-grid{grid-template-columns:1fr}}
-        .cmp-card{background:#fff;border:1px solid #E5D3B4;border-radius:14px;padding:20px 22px;animation:fadeUp .35s ease both}
-        .cmp-card.interest{border-color:#E6A192;background:#FBEDE8}
-        .cmp-eyebrow{font-family:'Inter',sans-serif;font-size:10px;font-weight:600;letter-spacing:.13em;text-transform:uppercase;color:#5E7A78;margin-bottom:6px}
-        .cmp-eyebrow.red{color:#D84233}
-        .cmp-num{font-family:'Lora',serif;font-size:34px;font-weight:700;color:#1F2427;line-height:1;margin-bottom:4px}
-        .cmp-num.red{color:#D84233}
-        .cmp-label{font-family:'Inter',sans-serif;font-size:12px;color:#5E7A78;line-height:1.4}
-        .cmp-sub{font-family:'Inter',sans-serif;font-size:11px;color:#5E7A78;margin-top:6px;font-style:italic}
-
-        /* breakdown bar */
-        .breakdown{background:#fff;border:1px solid #E5D3B4;border-radius:14px;padding:22px 24px;margin-bottom:14px;animation:fadeUp .4s ease}
-        .breakdown-title{font-family:'Inter',sans-serif;font-size:11px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:#D84233;margin-bottom:16px}
-        .bar-wrap{margin-bottom:6px}
-        .bar-end-labels{display:flex;flex-direction:column;gap:5px;margin-bottom:12px}
-        .bar-end-item{display:flex;align-items:center;gap:8px}
-        .total-item{margin-top:4px;padding-top:8px;border-top:1px solid #FBF3E4}
-        .bar-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
-        .bar-end-label{font-family:'Inter',sans-serif;font-size:12px;color:#5E7A78;flex:1}
-        .bar-end-value{font-family:'Lora',serif;font-size:13px;font-weight:700;color:#1F2427}
-        .bar-track-single{display:flex;height:14px;border-radius:7px;overflow:hidden;background:#FBF3E4}
-        .bar-seg{height:100%;transition:width .9s cubic-bezier(.16,1,.3,1)}
-
-        .footnote{font-family:'Inter',sans-serif;font-size:11px;color:#5E7A78;text-align:center;line-height:1.7}
-      `}</style>
-
-      <div className="wrap">
-        <img className="brand-logo" src="everyday_rich_stacked_logo_rgb_red.png" alt="Everyday Rich" />
-        <h1 className="headline">The real price<br />is your <em>time</em></h1>
-        <p className="subhead">Money can be earned again. Time can't. See how many hours of your life any purchase actually costs — including what financing really adds.</p>
-        <div className="divider" />
-
-        {/* Purchase */}
-        <div className="card">
-          <span className="card-label">What do you want to buy?</span>
-          <div className="row" style={{ marginBottom: 18 }}>
-            <div className="field">
-              <span className="field-label">Item</span>
-              <div className="iw">
-                <input className="inp" style={{ fontSize: 17 }} placeholder="new SUV, pool, vacation…" value={customItem}
-                  onChange={e => { setCustomItem(e.target.value); setSelectedPreset(null); reset(); }} />
-              </div>
-            </div>
-            <div className="field">
-              <span className="field-label">Sticker price</span>
-              <div className="iw">
-                <span className="pfx">$</span>
-                <input className="inp" placeholder="52,000" value={purchaseAmount}
-                  onChange={e => { const r = e.target.value.replace(/[^0-9.]/g, ""); setPurchaseAmount(r ? parseFloat(r).toLocaleString() : ""); setSelectedPreset(null); reset(); }}
-                  onKeyDown={e => e.key === "Enter" && calculate()} inputMode="numeric" />
-              </div>
-            </div>
-          </div>
-          <span className="card-label" style={{ marginBottom: 10 }}>Quick picks</span>
-          <div className="presets">
-            {PRESET_ITEMS.map(p => (
-              <button key={p.label} className={`pbtn${selectedPreset?.label === p.label ? " on" : ""}`} onClick={() => selectPreset(p)}>
-                <span className="pbtn-marker" />{p.label}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Income */}
-        <div className="card">
-          <span className="card-label">Your income</span>
-          <div className="toggle-wrap">
-            <button className={`tbtn${incomeMode === "annual" ? " on" : ""}`} onClick={() => { setIncomeMode("annual"); setIncomeValue(""); reset(); }}>Annual salary</button>
-            <button className={`tbtn${incomeMode === "hourly" ? " on" : ""}`} onClick={() => { setIncomeMode("hourly"); setIncomeValue(""); reset(); }}>Hourly wage</button>
-          </div>
-          <div className="iw" style={{ marginBottom: parsedIncome > 0 ? 8 : 0 }}>
-            <span className="pfx">$</span>
-            <input className="inp" placeholder={incomeMode === "annual" ? "85,000" : "42"} value={incomeValue}
-              onChange={e => { const r = e.target.value.replace(/[^0-9.]/g, ""); setIncomeValue(r ? parseFloat(r).toLocaleString() : ""); reset(); }}
-              onKeyDown={e => e.key === "Enter" && calculate()} inputMode="numeric" />
-            <span className="sfx">{incomeMode === "annual" ? "/year" : "/hr"}</span>
-          </div>
-
-          <div className="field-label" style={{ marginTop: 14, marginBottom: 6 }}>State tax rate</div>
-          <div className="toggle-wrap">
-            <button className={`tbtn${stateTaxMode === "average" ? " on" : ""}`} onClick={() => { setStateTaxMode("average"); reset(); }}>National average (5%)</button>
-            <button className={`tbtn${stateTaxMode === "custom" ? " on" : ""}`} onClick={() => { setStateTaxMode("custom"); reset(); }}>Enter my own rate</button>
-          </div>
-          {stateTaxMode === "custom" && (
-            <div className="iw" style={{ marginTop: 10 }}>
-              <input className="inp inp-sm" placeholder="0" value={customStateRatePct}
-                onChange={e => { setCustomStateRatePct(e.target.value.replace(/[^0-9.]/g, "")); reset(); }}
-                inputMode="decimal" />
-              <span className="sfx">%</span>
-            </div>
-          )}
-          {stateTaxMode === "custom" && (
-            <p className="hint" style={{ marginTop: 8 }}>e.g. Tennessee, Florida, and Texas residents can enter 0% — nine states have no state income tax</p>
-          )}
-
-          {parsedIncome > 0 && netHourly > 0 && (
-            <p className="hint" style={{ marginTop: 8 }}>
-              After taxes ({effectiveFedPct}% federal + {Math.round(stateRate * 100)}% state = {totalTaxPct}% total), your take-home is roughly <strong>${netHourly.toFixed(2)}/hr</strong>
-              {incomeMode === "annual" ? ` · ${fmt$(annualGross * atFraction)}/year` : ""}
-            </p>
-          )}
-        </div>
-
-        {/* Financing */}
-        <div className="card">
-          <label className="fin-toggle">
-            <input type="checkbox" checked={financing} onChange={e => { setFinancing(e.target.checked); reset(); }} />
-            <div>
-              <div className="fin-toggle-label">I plan to finance this purchase</div>
-              <div className="fin-toggle-sub">See the true cost with interest included</div>
-            </div>
-          </label>
-
-          {financing && (
-            <div className="fin-fields">
-              <div className="row" style={{ marginBottom: 16 }}>
-                <div className="field">
-                  <span className="field-label">Down payment</span>
-                  <div className="iw">
-                    <span className="pfx">$</span>
-                    <input className="inp inp-sm" placeholder="5,000" value={downPayment}
-                      onChange={e => { const r = e.target.value.replace(/[^0-9.]/g, ""); setDownPayment(r ? parseFloat(r).toLocaleString() : ""); reset(); }}
-                      inputMode="numeric" />
-                  </div>
-                </div>
-                <div className="field">
-                  <span className="field-label">APR (%)</span>
-                  <div className="iw">
-                    <input className="inp inp-sm" placeholder="7.0" value={apr}
-                      onChange={e => { setApr(e.target.value.replace(/[^0-9.]/g, "")); reset(); }}
-                      inputMode="decimal" />
-                    <span className="sfx">%</span>
-                  </div>
-                </div>
-                <div className="field">
-                  <span className="field-label">Term</span>
-                  <div className="iw">
-                    <input className="inp inp-sm" placeholder="60" value={termMonths}
-                      onChange={e => { setTermMonths(e.target.value.replace(/[^0-9]/g, "")); reset(); }}
-                      inputMode="numeric" />
-                    <span className="sfx">mo</span>
-                  </div>
-                </div>
-              </div>
-              {parsedPurchase > 0 && (
-                <p className="hint">
-                  Monthly payment: <strong>{fmt$(monthlyPayment)}</strong> ·
-                  {parsedApr > 0 ? <> Total interest: <strong>{fmt$(totalInterest)}</strong> · </> : <> 0% interest · </>}
-                  True cost: <strong>{fmt$(financedTotal)}</strong>
-                </p>
-              )}
-            </div>
-          )}
-
-          <button className="calc-btn" onClick={calculate} disabled={!canCalculate}>
-            Show me the real cost →
-          </button>
-        </div>
-
-        {/* Results */}
-        {results && (
-          <div className="results">
-
-            {/* Hero — financed hours if financing, otherwise cash hours */}
-            {financing && totalInterest > 0 ? (
-              <div className="hero">
-                <div className="hero-eyebrow">Financed, {customItem || "this"} will cost you</div>
-                <div className="hero-num"><AnimatedNumber value={results.hoursFinanced} /></div>
-                <div className="hero-unit">hours of your life</div>
-                <div className="hero-detail">
-                  <strong>{results.daysFinanced.toLocaleString()} full work days</strong> · {fmt$(financedTotal)} true cost · at ${netHourly.toFixed(2)}/hr after tax
-                </div>
-              </div>
-            ) : (
-              <div className="hero">
-                <div className="hero-eyebrow">To pay cash for {customItem || "this"}, you must work</div>
-                <div className="hero-num"><AnimatedNumber value={results.hoursCash} /></div>
-                <div className="hero-unit">hours of your life</div>
-                <div className="hero-detail">
-                  <strong>{results.daysCash.toLocaleString()} full work days</strong> · at ${netHourly.toFixed(2)}/hr after tax
-                </div>
-              </div>
-            )}
-
-            {/* Financing secondary row: cash + interest side by side */}
-            {financing && totalInterest > 0 && (
-              <>
-                <div className="cmp-grid">
-                  <div className="cmp-card" style={{ animationDelay: "0.05s" }}>
-                    <div className="cmp-eyebrow">If paying cash</div>
-                    <div className="cmp-num"><AnimatedNumber value={results.hoursCash} /></div>
-                    <div className="cmp-label">hours worked</div>
-                    <div className="cmp-sub">{results.daysCash.toLocaleString()} work days · {fmt$(parsedPurchase)} sticker price</div>
-                  </div>
-                  <div className="cmp-card interest" style={{ animationDelay: "0.1s" }}>
-                    <div className="cmp-eyebrow red">Interest alone costs you</div>
-                    <div className="cmp-num red"><AnimatedNumber value={results.hoursInterest} /></div>
-                    <div className="cmp-label">extra hours worked</div>
-                    <div className="cmp-sub">{results.daysInterest.toLocaleString()} extra work days · {fmt$(totalInterest)} in interest</div>
-                  </div>
-                </div>
-
-                {/* Single two-tone bar */}
-                <div className="breakdown">
-                  <div className="breakdown-title">How your hours break down</div>
-                  <div className="bar-wrap">
-                    <div className="bar-end-labels">
-                      <div className="bar-end-item">
-                        <span className="bar-dot" style={{ background: "#EB9532" }} />
-                        <span className="bar-end-label">Purchase price</span>
-                        <span className="bar-end-value">{results.hoursCash.toLocaleString()} hrs</span>
-                      </div>
-                      <div className="bar-end-item">
-                        <span className="bar-dot" style={{ background: "#D84233" }} />
-                        <span className="bar-end-label">Interest</span>
-                        <span className="bar-end-value">{results.hoursInterest.toLocaleString()} hrs</span>
-                      </div>
-                      <div className="bar-end-item total-item">
-                        <span className="bar-dot" style={{ background: "transparent" }} />
-                        <span className="bar-end-label" style={{ fontWeight: 600, color: "#1F2427" }}>Total</span>
-                        <span className="bar-end-value" style={{ fontWeight: 700, color: "#1F2427" }}>{results.hoursFinanced.toLocaleString()} hrs</span>
-                      </div>
-                    </div>
-                    <div className="bar-track-single">
-                      <div className="bar-seg" style={{ width: `${(results.hoursCash / results.hoursFinanced) * 100}%`, background: "#EB9532" }} />
-                      <div className="bar-seg" style={{ width: `${(results.hoursInterest / results.hoursFinanced) * 100}%`, background: "#D84233" }} />
-                    </div>
-                  </div>
-                  <p style={{ fontFamily: "'Inter',sans-serif", fontSize: 12, color: "#5E7A78", marginTop: 14 }}>
-                    {Math.round((results.hoursInterest / results.hoursFinanced) * 100)}% of your working hours go straight to the bank.
-                  </p>
-                </div>
-              </>
-            )}
-
-            <p className="footnote">
-              Assumes 2,000 working hours/year · 2026 federal brackets + {Math.round(stateRate * 100)}% state tax ({stateTaxMode === "custom" ? "your entered rate" : "national average"}) · 8-hr workdays<br />
-              <br>This calculator is for educational purposes only and does not constitute financial advice. Individual financial situations vary, and readers should consider consulting a qualified financial professional before making major financial decisions.
-            </p>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
-
-    ReactDOM.createRoot(document.getElementById('root')).render(<OpportunityCostEngine />);
-  </script>
 </body>
 </html>
